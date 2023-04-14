@@ -15,3 +15,6 @@ var router = express.Router();
 /* GET Jug */
 router.get('/', Jug_controlers.Jug_view_all_Page );
 module.exports = router;
+
+// GET request for one Jug.
+router.get('/Jug/:id', Jug_controlers.Jug_detail);
