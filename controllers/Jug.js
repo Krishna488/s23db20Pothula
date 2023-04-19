@@ -39,9 +39,18 @@ exports.Jug_detail = async function(req, res) {
     }
     };
 // Handle Jug delete form on DELETE.
-exports.Jug_delete = function(req, res) {
-res.send('NOT IMPLEMENTED: Jug delete DELETE ' + req.params.id);
-};
+// Handle Jug delete on DELETE.
+exports.Jug_delete = async function(req, res) {
+    console.log("delete " + req.params.id)
+    try {
+    result = await Jug.findByIdAndDelete( req.params.id)
+    console.log("Removed " + result)
+    res.send(result)
+    } catch (err) {
+    res.status(500)
+    res.send(`{"error": Error deleting ${err}}`);
+    }
+    };
 //  Handle Jug update form on PUT.
 exports.Jug_update_put = async function(req, res) {
     console.log(`update on id ${req.params.id} with body
@@ -95,4 +104,72 @@ exports.Jug_view_all_Page = async function(req, res) {
     res.send(`{"error": ${err}}`);
     }
     };
-    
+
+// Handle a delete one view with id from query
+exports.Jug_delete_Page = async function(req, res) {
+    console.log("Delete view for id " + req.query.id)
+    try{
+    result = await Jug.findById(req.query.id)
+    res.render('Jugdelete', { title: 'Jug Delete', toShow:
+    result });
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };
+// Handle a show one view with id specified by query
+exports.Jug_view_one_Page = async function(req, res) {
+    console.log("single view for id " + req.query.id)
+    try{
+    result = await Jug.findById( req.query.id)
+    res.render('Jugdetail',
+    { title: 'Jug Detail', toShow: result });
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };
+
+// Handle building the view for creating a Jug.
+// No body, no in path parameter, no query.
+// Does not need to be async
+exports.Jug_create_Page = function(req, res) {
+    console.log("create view")
+    try{
+    res.render('Jugcreate', { title: 'Jug Create'});
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };
+
+// Handle building the view for updating a Jug.
+// query provides the id
+exports.Jug_update_Page = async function(req, res) {
+    console.log("update view for item "+req.query.id)
+    try{
+    let result = await Jug.findById(req.query.id)
+    res.render('Jugupdate', { title: 'Jug Update', toShow: result });
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };
+
+// Handle a delete one view with id from query
+exports.Jug_delete_Page = async function(req, res) {
+    console.log("Delete view for id " + req.query.id)
+    try{
+    result = await Jug.findById(req.query.id)
+    res.render('Jugdelete', { title: 'Jug Delete', toShow:
+    result });
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };

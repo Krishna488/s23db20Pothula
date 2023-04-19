@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const JugSchema = mongoose.Schema({
-Jug_type: String,
+Jug: String,
 size: String,
 cost: Number
 })
