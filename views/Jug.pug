@@ -5,12 +5,21 @@ block content
   -let Jug = results;
   div(class="container_fluid")
     each item,index in Jug
-        div(class="row" onclick=`buy(${index})`)       
-            div(class="col-sm-2") #{item.Jug}
-            div(class="col-sm-2") #{item.size}
-            div(class="col-sm-2") #{item.cost}
+     - let destination = `dispatch(\"/Jug/update?id=${item._id}\")`
+      div(class="row" onclick=`buy(${index})`)       
+        div(class="col-sm-2") #{item.Jug}
+        div(class="col-sm-2") #{item.size}
+        div(class="col-sm-2") #{item.cost}
+      button.btn( class="btn-primary ml-1", onclick= destination) Update
   script.
       function buy(indexnumber){
         //indexnumber=indexnumber+1;
         alert('You purchased item '+ indexnumber)
       }
+  script.
+      function dispatch(path){
+        window.location.href=path
+      }
+    
+
+
