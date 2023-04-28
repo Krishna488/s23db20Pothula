@@ -1,25 +1,25 @@
 extends layout
-
 block content
   h1= title
-  -let Jug = results;
-  div(class="container_fluid")
-    each item,index in Jug
-     - let destination = `dispatch(\"/Jug/update?id=${item._id}\")`
-      div(class="row" onclick=`buy(${index})`)       
-        div(class="col-sm-2") #{item.Jug}
-        div(class="col-sm-2") #{item.size}
-        div(class="col-sm-2") #{item.cost}
-      button.btn( class="btn-primary ml-1", onclick= destination) Update
-  script.
-      function buy(indexnumber){
-        //indexnumber=indexnumber+1;
-        alert('You purchased item '+ indexnumber)
-      }
-  script.
-      function dispatch(path){
-        window.location.href=path
-      }
-    
+  -let items = results
+  -let destination1 = `dispatch(\"/Jug/create\")`
+  button.btn( class="btn-info ml-1", onclick= destination1) Create
+  div(class="container-fluid")
+   
+    each item,index in items
+     - let destination2 = `dispatch(\"/Jug/update?id=${item._id}\")`
+     - let destination3 = `dispatch(\"/Jug/detail?id=${item._id}\")`
+     - let destination4 = `dispatch(\"/Jug/delete?id=${item._id}\")`
+     div(class="row" onclick = `buy(${index})`)       
+            div(class="col-sm-2") #{item.Jug}
+            div(class="col-sm-2") #{item.size}
+            div(class="col-sm-2") #{item.cost}  
+     button.btn( class="btn-primary ml-1", onclick= destination2) Update
+     button.btn( class="btn-secondary ml-1", onclick= destination3) Detail  
+     button.btn( class="btn-warning", onclick= destination4) Delete
 
 
+  script.
+   function dispatch(path){
+     window.location.href=path
+   }

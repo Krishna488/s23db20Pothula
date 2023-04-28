@@ -5,30 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 
-require('dotenv').config();
-const connectionString =
-process.env.MONGO_CON
-mongoose = require('mongoose');
-mongoose.connect(connectionString,
-{useNewUrlParser: true,
-useUnifiedTopology: true});
-
-
-//Get the default connection
-var db = mongoose.connection;
-//Bind connection to error event
-db.on('error', console.error.bind(console, 'MongoDB connectionerror:'));
-db.once("open", function(){
-console.log("Connection to DB succeeded")})
-
-
-var Jug = require("./models/Jug");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var JugRouter = require('./routes/Jug');
+var ballRouter = require('./routes/Jug');
 var boardRouter = require('./routes/board');
-var selectorRouter = require('./routes/selector');
+var selectRouter=require('./routes/selector');
+var Jug = require("./models/Jug");
 var resourceRouter = require('./routes/resource');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -47,6 +30,7 @@ passport.use(new LocalStrategy(
   });
   }))
 
+
 var app = express();
 
 // view engine setup
@@ -57,14 +41,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/Jug', JugRouter);
-app.use('/board', boardRouter);
-app.use('/selector', selectorRouter);
-app.use('/resource', resourceRouter);
 app.use(require('express-session')({
   secret: 'keyboard cat',
   resave: false,
@@ -72,34 +48,25 @@ app.use(require('express-session')({
   }));
   app.use(passport.initialize());
   app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'public')));
 
-async function recreateDB(){
-  // Delete everything
-  await Jug.deleteMany();
-  let instance1 = new Jug({Jug: "Kameneni", size: "large", cost: 30});
-  
-  instance1.save().then( function(err,doc) {
-  if(err) return console.error(err);
-  console.log("First object saved")
-  });
- 
- let instance2 = new Jug({Jug: "Denton", size: "med", cost: 20});
-  
-  instance2.save().then( function(err,doc) {
-  if(err) return console.error(err);
-  console.log("Second object saved")
-  });
- 
- let instance3 = new Jug({Jug: "ruden", size: "small", cost: 10});
-  
-  instance3.save().then( function(err,doc) {
-  if(err) return console.error(err);
-  console.log("Third object saved")
-  });
-}
- let reseed = true;
- if (reseed) { recreateDB();}
- // passport config
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/Jug', ballRouter);
+app.use('/board',boardRouter);
+app.use('/selector', selectRouter);
+app.use('/resource', resourceRouter);
+
+
+require('dotenv').config();
+const connectionString =
+process.env.MONGO_CON
+mongoose = require('mongoose');
+mongoose.connect(connectionString,
+{useNewUrlParser: true,
+useUnifiedTopology: true});
+
+// passport config
 // Use the existing connection
 // The Account model
 var Account =require('./models/account');
@@ -123,6 +90,46 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+//Get the default connection
+var db = mongoose.connection;
+//Bind connection to error event
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once("open", function(){
+console.log("Connection to DB succeeded")});
+
+// We can seed the collection if needed on server start
+async function recreateDB(){
+ // Delete everything
+ await Jug.deleteMany();
+ let instance1 = new
+Jug({ball_name:"Cricket", ball_shape:'small',
+ball_radius:10});
+await instance1.save();
+//  instance1.save( function(err,doc) {
+//  if(err) return console.error(err);
+ console.log("First object saved")
+//  });
+let instance2 = new
+Jug({ball_name:"rugby", ball_shape:'medium',
+ball_radius:20});
+await instance2.save();
+//  instance1.save( function(err,doc) {
+//  if(err) return console.error(err);
+ console.log("second object saved")
+//  });
+
+let instance3 = new
+Jug({ball_name:"volleyball", ball_shape:'large',
+ball_radius:30});
+await instance3.save();
+//  instance1.save( function(err,doc) {
+//  if(err) return console.error(err);
+ console.log("third object saved")
+//  });
+
+}
+let reseed = true;
+if (reseed) { recreateDB();}
+
+
 module.exports = app;
-
-
